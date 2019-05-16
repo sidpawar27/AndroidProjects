@@ -1,0 +1,1177 @@
+////////////////////////////////////////////////////////////////////////////////
+MainActivity
+////////////////////////////////////////////////////////////////////////////////
+
+package com.example.shree.multimediademo;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ImageView;
+
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+ImageView iv;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        iv=findViewById(R.id.imageView2);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent i=new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT,"Multimedia");
+            i.putExtra(Intent.EXTRA_TEXT,"Download this App ");
+            Intent i1=Intent.createChooser(i,"share");
+            startActivity(i1);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.camera) {
+
+            Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(i,1111);
+
+        } else if (id == R.id.audio) {
+            Intent i=new Intent(MainActivity.this,Audio.class);
+            startActivity(i);
+
+        } else if (id == R.id.video ) {
+            Intent i= new Intent(MainActivity.this,Video.class);
+            startActivity(i);
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1111)
+        {
+            Bundle b=data.getExtras();
+            Bitmap image=(Bitmap)b.get("data");
+            iv.setImageBitmap(image);
+
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////Audio
+////////////////////////////////////////////////////////////////////////////////
+package com.example.shree.multimediademo;
+
+import android.media.MediaPlayer;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class Audio extends AppCompatActivity {
+    MediaPlayer mp;
+    Button b1,b2,b3;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_audio);
+        b1=findViewById(R.id.button2);
+        b2=findViewById(R.id.button3);
+        b3=findViewById(R.id.button4);
+
+        mp=MediaPlayer.create(this,R.raw.s);
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.start();
+            }
+
+        });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.pause();
+            }
+        });
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mp.stop();
+            }
+        });
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////Video
+////////////////////////////////////////////////////////////////////////////////////////////////
+package com.example.shree.multimediademo;
+
+import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.MediaController;
+import android.widget.VideoView;
+
+public class Video extends AppCompatActivity {
+
+    VideoView v;
+    Button b;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video);
+        v=findViewById(R.id.videoView);
+        b=findViewById(R.id.button);
+
+        String s1="android.resource://com.example.shree.multimediademo/"+R.raw.vdo;
+        Uri uri=Uri.parse(s1);
+        v.setVideoURI(uri);
+        MediaController m=new MediaController(Video.this);
+        v.setMediaController(m);
+        v.requestFocus();
+        v.start();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Alert Dialog
+
+package com.example.shree.alert;
+
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    Button btn1;
+    AlertDialog ad;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        AlertDialog.Builder ab=new AlertDialog.Builder(this);
+        ab.setIcon(R.drawable.alert);
+        ab.setTitle("Alert!");
+        ab.setMessage("Want To Close ?");
+        ab.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Yes", Toast.LENGTH_SHORT).show();
+            }
+        });
+        ab.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "No", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        ab.setNeutralButton("Cancle", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Cancle", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+         ad= ab.create();
+        btn1=findViewById(R.id.button1);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ad.show();
+            }
+        });
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("OnRestarted","Restarted");
+        Toast.makeText(getApplicationContext(), "Restart", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("Start","Started");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("Stop","Stopped");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("Resume","Resumed");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("Destroy","Destroyed");
+
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Shares Preferences
+
+package com.example.shree.sharedpref;
+
+import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+
+    SharedPreferences sp;
+    SharedPreferences.Editor se;
+    EditText e1,e2;
+    Button b1,b2,b3;
+    String s1,s2;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        e1=findViewById(R.id.editText);
+        e2=findViewById(R.id.editText2);
+
+        b1=findViewById(R.id.button);
+        b2=findViewById(R.id.button2);
+        b3=findViewById(R.id.button3);
+
+        sp=getSharedPreferences("Information",MODE_PRIVATE);
+        if(sp.contains("siddhant"))
+        {
+            e1.setText(sp.getString("siddhant",s1));
+        }
+        if(sp.contains("pawar"))
+        {
+            e2.setText(sp.getString("pawar",s2));
+        }
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                s1=e1.getText().toString();
+                s2=e2.getText().toString();
+                se=sp.edit();
+                se.putString("siddhant",s1);
+                se.putString("pawar",s2);
+                se.commit();
+                Toast.makeText(getApplicationContext(),"Data Stored",Toast.LENGTH_LONG).show();
+            }
+        });
+       b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nm=sp.getString("siddhant","");
+                String ps=sp.getString("pawar","");
+                e1.setText(nm);
+                e2.setText(ps);
+                Toast.makeText(getApplicationContext(),"Data Retrive",Toast.LENGTH_LONG).show();
+            }
+        });
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                e1.setText(null);
+                e2.setText(null);
+                Toast.makeText(getApplicationContext(),"Data Cleared",Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Notification Manager
+
+package com.example.shree.notificationnew;
+
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+
+import static com.example.shree.notificationnew.App.CHANNEL_1_ID;
+import static com.example.shree.notificationnew.App.CHANNEL_2_ID;
+
+public class MainActivity extends AppCompatActivity {
+
+    private NotificationManagerCompat notificationManager;
+    private EditText editTextTitle;
+    private EditText editTExtMessage;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        notificationManager = NotificationManagerCompat.from(this);
+        editTextTitle=findViewById(R.id.edit_text_title);
+        editTExtMessage=findViewById(R.id.edit_text_message);
+
+    }
+    public  void sendOnChannel1(View v)
+    {
+        String title=editTextTitle.getText().toString();
+        String message=editTExtMessage.getText().toString();
+
+        Intent activityIntent=new Intent(this,NextActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,0,activityIntent,0);
+
+        Notification notification= new NotificationCompat.Builder(this,CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_one)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .setContentIntent(contentIntent)
+                .addAction(R.mipmap.ic_launcher,"Open",contentIntent)
+                .setAutoCancel(true)
+                .build();
+        notificationManager.notify(1,notification);
+    }
+
+
+    public  void sendOnChannel2(View v)
+    {
+        String title=editTextTitle.getText().toString();
+        String message=editTExtMessage.getText().toString();
+        Notification notification= new NotificationCompat.Builder(this,CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_two)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+        notificationManager.notify(2,notification);
+    }
+}
+
+
+package com.example.shree.notificationnew;
+
+import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+
+public class App extends Application {
+    public static final String CHANNEL_1_ID = "channel1";
+    public static final String CHANNEL_2_ID = "channel2";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        createNotificatoinChannel();
+
+
+    }
+
+    public void  createNotificatoinChannel()
+    {
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O)
+        {
+            NotificationChannel channel1 = new NotificationChannel(CHANNEL_1_ID,"Channel 1",
+                    NotificationManager.IMPORTANCE_HIGH);
+           // channel1.setDescription("This Is Channel 1");
+
+            NotificationChannel channel2 = new NotificationChannel(CHANNEL_2_ID,"Channel 2",
+                    NotificationManager.IMPORTANCE_LOW);
+            channel2.setDescription("This Is Channel 2");
+
+            NotificationManager manager= getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel1);
+            manager.createNotificationChannel(channel2);
+     }
+
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+SMS
+
+package com.example.shree.smsmobile;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
+    Button sendBtn;
+    EditText txtphoneNo;
+    EditText txtMessage;
+    String phoneNo;
+    String message;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sendBtn = (Button) findViewById(R.id.button);
+        txtphoneNo = (EditText) findViewById(R.id.editText);
+        txtMessage = (EditText) findViewById(R.id.editText2);
+
+     sendBtn.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             sendSMSMessage();
+         }
+     });
+    }
+    protected void sendSMSMessage() {
+        phoneNo = txtphoneNo.getText().toString();
+        message = txtMessage.getText().toString();
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SEND_SMS)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(phoneNo, null, message, null, null);
+                    Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "SMS sent.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
+
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Telephony manager
+
+package com.example.shree.telephonymanager;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    TelephonyManager tm;
+    TextView t1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+        t1=findViewById(R.id.textView2);
+
+        tm=(TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+        String name=tm.getSimOperatorName();
+        int networkType=tm.getNetworkType();
+
+        int phoneType=tm.getPhoneType();
+        String cname=tm.getNetworkCountryIso();
+        String simname=tm.getSimCountryIso();
+
+        String ptype=null;
+        String ntype=null;
+
+        switch (networkType)
+        {
+            case (TelephonyManager.NETWORK_TYPE_CDMA):
+                ntype="CDMA";
+                break;
+
+            case (TelephonyManager.NETWORK_TYPE_GSM):
+                ntype="GSM";
+                break;
+
+            case (TelephonyManager.NETWORK_TYPE_EDGE):
+                ntype="EDGE";
+                break;
+
+        }
+
+        switch (phoneType)
+        {
+            case (TelephonyManager.PHONE_TYPE_CDMA):
+                ptype="CDMA";
+                break;
+
+            case (TelephonyManager.PHONE_TYPE_GSM):
+                ptype="GSM";
+                break;
+
+            case (TelephonyManager.PHONE_TYPE_NONE):
+                ntype="NONE";
+                break;
+        }
+        String msg="Sim Operator = "+name+"\nNetwork Type = "+ntype+"\nPhone Type = "+ptype+"\nNetwuork Country Code = "+cname+"\nSim Name = "+simname;
+        t1.setText(msg);
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+login + alert
+
+package com.example.shree.login;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class Login extends MainActivity {
+
+
+    Button b1,b2;
+    EditText e1,e2;
+    int flag=0;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        b1=findViewById(R.id.button3);
+        b2=findViewById(R.id.button4);
+        e1=findViewById(R.id.editText3);
+        e2=findViewById(R.id.editText4);
+
+        db = openOrCreateDatabase("Login",MODE_PRIVATE,null);
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String unm ,ps;
+                unm=e1.getText().toString();
+                ps=e2.getText().toString();
+
+Cursor c1;
+
+                c1=db.rawQuery("select * from Login",null);
+                while (c1.moveToNext()){
+                    if(unm.equals(c1.getString(0)) && ps.equals(c1.getString(1)))
+                    {
+                        flag =1;
+                        Intent i=new Intent(getApplicationContext(),Home.class);
+                        startActivity(i);
+                        Toast.makeText(getApplicationContext(), "  "+unm+"  ", Toast.LENGTH_LONG).show();
+                    }
+                }
+                if(flag==0)
+                {
+                    AlertDialog.Builder ab = new AlertDialog.Builder(Login.this);
+                    ab.setIcon(R.drawable.ic_launcher_background);
+                    ab.setTitle("Alert!");
+                    ab.setMessage("Want To Close ?");
+                    ab.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            }
+                    });
+                    ab.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    ab.setNeutralButton("Cancle", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                           e1.setText("");
+                           e2.setText("");
+                        }
+                    });
+                    AlertDialog  ad= ab.create();
+                    ad.show();
+                }
+
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i3 =new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(i3);
+            }
+        });
+
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Implcit Intents
+
+package com.shital.intent;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class implicit extends AppCompatActivity {
+ EditText e1;
+  Button call,Dialpad,browser,galary,call_log,camera,contact;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_implicit);
+        e1 = findViewById(R.id.editText);
+        call = findViewById(R.id.button);
+        Dialpad = findViewById(R.id.button5);
+        contact = findViewById(R.id.button6);
+        browser = findViewById(R.id.button7);
+        call_log = findViewById(R.id.button8);
+        camera = findViewById(R.id.button10);
+        galary = findViewById(R.id.button9);
+
+        call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                String s1=e1.getText().toString();
+                Intent i=new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+s1));
+                startActivity(i);
+            }
+        });
+
+        Dialpad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(Intent.ACTION_DIAL,Uri.parse("tel:8788709972"));
+                startActivity(i);
+            }
+        });
+
+        contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(Intent.ACTION_VIEW,Uri.parse("content://contacts//people/"));
+                startActivity(i);
+            }
+        });
+
+        browser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.google.com"));
+                startActivity(i);
+            }
+        });
+        call_log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(Intent.ACTION_VIEW,Uri.parse("content://call_log/calls/"));
+                startActivity(i);
+            }
+        });
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivity(i);
+            }
+        });
+        galary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent i=new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/external/images/media/"));
+                startActivity(i);
+            }
+        });
+    }
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+Main
+
+package com.example.shree.openhelper;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    EditText Name, Pass;
+    Button Login,Register;
+    MyHelper mh;
+
+    TextView tv;
+    String unm,pas;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Name = findViewById(R.id.editText);
+        Pass = findViewById(R.id.editText2);
+        Login = findViewById(R.id.button2);
+        Register = findViewById(R.id.button);
+
+        mh = new MyHelper(this);
+
+      //  unm=Name.getText().toString();
+     //   pas=Pass.getText().toString();
+
+        Register.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+
+                mh.insertdata(Name.getText().toString(),Pass.getText().toString());
+                Toast.makeText(getApplicationContext(), ""+Name.getText().toString()+"", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        Login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor cursor =mh.fetch();
+                String unm=Name.getText().toString();
+                String pass=Pass.getText().toString();
+                while (cursor.moveToNext())
+                {
+
+                    Toast.makeText(getApplicationContext(), "  Success ", Toast.LENGTH_LONG).show();
+                    if(unm.equals(cursor.getString(0)) && pass.equals(cursor.getString(1))){
+
+                        Intent i=new Intent(MainActivity.this,Activity2.class);
+                        startActivity(i);
+
+
+                    }
+                }
+            }
+        });
+    }
+}
+
+
+Helper
+
+package com.example.shree.openhelper;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class MyHelper extends SQLiteOpenHelper {
+    public MyHelper(Context context) {
+        super(context, "DB.db", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table Login(name varchar(15),pass varchar(15))");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    public void insertdata(String s1, String s2) {
+        SQLiteDatabase db1 = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("name", s1);
+        v.put("pass", s2);
+        db1.insert("Login", null, v);
+    }
+
+    public Cursor fetch() {
+        SQLiteDatabase db2 = getWritableDatabase();
+        Cursor c = db2.rawQuery("select * from Login", null);
+        return c ;
+    }
+
+}
+
+Onkyaaaaaaa
+
+package com.example.dbopenhelper;
+
+import android.database.Cursor;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    DBHelper dbHelper;
+    EditText e1,e2,e3,e4;
+    Button b1,b2,b3,b4;
+    TextView tv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dbHelper=new DBHelper(MainActivity.this);
+    e1=findViewById(R.id.editText);
+    e2=findViewById(R.id.editText2);
+    e3=findViewById(R.id.editText3);
+
+    b1=findViewById(R.id.button);
+    b2=findViewById(R.id.button2);
+    b3=findViewById(R.id.button3);
+    b4=findViewById(R.id.button4);
+
+    tv=findViewById(R.id.textView);
+
+    b1.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            long result = dbHelper.Insert(getvalue(e1),getvalue(e2),getvalue(e3));
+            if(result== -1)
+            {
+                Toast.makeText(getApplicationContext(),"Some errore happened while inserting",Toast.LENGTH_SHORT).show();
+
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(),"Successfully Inserted",Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long resultUpdate =dbHelper.Update(getvalue(e1),getvalue(e2),getvalue(e3)) ;
+                if(resultUpdate==0)
+                {
+                    Toast.makeText(getApplicationContext(),"Some errore happened while updating",Toast.LENGTH_SHORT).show();
+
+                }
+                else if(resultUpdate==1)
+                {
+                    Toast.makeText(getApplicationContext(),"Successfully Updated",Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Errors occured,multiple rows updated",Toast.LENGTH_SHORT).show();
+
+
+                }
+            }
+        });
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long resultDelete =dbHelper.Delete(getvalue(e1));
+                if(resultDelete==-0)
+                {
+                    Toast.makeText(getApplicationContext(),"Some errore happened while deliting",Toast.LENGTH_SHORT).show();
+
+                }
+                else if(resultDelete==1)
+                {
+                    Toast.makeText(getApplicationContext(),"Successfully Deleted",Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+
+        b4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StringBuffer data= new StringBuffer();
+                Cursor cursor =dbHelper.getAllRecords();
+                for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext())
+                {
+                    data.append("  "+cursor.getString(0));
+                    data.append("  "+cursor.getString(1));
+                    data.append("  "+cursor.getString(2));
+                    data.append("\n");
+                }
+
+                tv.setText(data);
+
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        dbHelper.OpenDB();
+        Toast.makeText(getApplicationContext(),"OpenDB called",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dbHelper.CloseDB();
+    }
+
+    public String getvalue(EditText edit)
+    {
+
+        return edit.getText().toString().trim();
+    }
+}
+
+
+*/*/*/*////*//*/*/***//*
+helper
+
+package com.example.dbopenhelper;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DBHelper extends SQLiteOpenHelper {
+
+    public static  final String DBNAME=" mydb.db";
+    public static  final int VERSION=1;
+    SQLiteDatabase myDB;
+
+    public static  final String TABLENAME="employee";
+    public static  final String ID="id";
+    public static  final String NAME="name";
+    public static  final String SALARY= "salary";
+
+
+    public DBHelper(Context context) {
+
+        super(context, DBNAME, null, VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL("create table  if not exists employee(id varchar(10),name varchar(10),salary varchar(10))");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
+    public  void OpenDB()
+    {
+        myDB=getWritableDatabase();
+    }
+    public  void CloseDB()
+    {
+        if( myDB.isOpen())
+            myDB.close();
+    }
+
+    public long Insert(String id2,String nm,String sal)
+    {
+        ContentValues values=new ContentValues();
+        values.put(ID,id2);
+        values.put(NAME,nm);
+        values.put(SALARY,sal);
+
+        return myDB.insert(TABLENAME,null,values);
+
+    }
+
+    public long Update(String id2,String nm,String sal)
+    {
+        ContentValues values=new ContentValues();
+        values.put(NAME,nm);
+        values.put(SALARY,sal);
+
+        String where= ID + " = " + id2;
+
+        return myDB.update(TABLENAME,values,where,null);
+
+    }
+
+    public long Delete(String id2)
+    {
+        String where= ID + " = " + id2;
+
+        return myDB.delete(TABLENAME,where,null);
+
+    }
+
+    public Cursor getAllRecords()
+    {
+        String query="SELECT * FROM " + TABLENAME;
+        Cursor c= myDB.rawQuery(query,null);
+        return  c;
+    }
+
+
+}
